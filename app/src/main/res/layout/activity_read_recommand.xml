@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    tools:context="app.louiemok.uni.starchef.view.ReadRecommandActivity">
+    <app.louiemok.uni.starchef.seledefine.YsxNavigationBar
+        android:id="@+id/nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:id="@+id/ll_normal_1"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:layout_below="@id/nav"
+        android:background="@color/colorWhite">
+        <View
+            android:layout_width="3dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="15dp"
+            android:layout_gravity="center_vertical"
+            android:background="#c47ad6" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
+            android:text="阅读推荐"
+            android:textSize="16sp"
+            android:textColor="@color/textColor"
+            android:gravity="center"
+            android:layout_marginStart="10dp"/>
+    </LinearLayout>
+    <ListView
+        android:id="@+id/lv_readrecommand_inside"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/ll_normal_1"
+        android:background="@color/colorWhite"
+        android:scrollbars="none"
+        android:divider="@null"
+        android:dividerHeight="15dp" />
+</RelativeLayout>

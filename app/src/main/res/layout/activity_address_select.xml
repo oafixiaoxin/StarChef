@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    tools:context="app.louiemok.uni.starchef.view.AddressSelectActivity">
+    <app.louiemok.uni.starchef.seledefine.YsxNavigationBar
+        android:id="@+id/nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/colorOrange"
+        android:layout_below="@id/nav" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_pro_city_area"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="2dp"
+        android:layout_below="@id/nav"
+        android:scrollbars="none" />
+</com.zhy.android.percent.support.PercentRelativeLayout>

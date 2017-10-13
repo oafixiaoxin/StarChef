@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundColor"
+    tools:context="app.louiemok.uni.starchef.view.SkillRecommandActivity">
+    <app.louiemok.uni.starchef.seledefine.YsxNavigationBar
+        android:id="@+id/nav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nav"
+        android:fillViewport="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:id="@+id/ll_normal_2"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                android:background="@color/colorWhite">
+                <View
+                    android:layout_width="3dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="#c47ad4" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="为你推荐"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColor"
+                    android:gravity="center"
+                    android:layout_marginStart="10dp"/>
+            </LinearLayout>
+            <ListView
+                android:id="@+id/lv_skillrecommand_inside"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:scrollbars="none"
+                android:divider="@null"
+                android:dividerHeight="15dp" />
+            <LinearLayout
+                android:id="@+id/ll_normal_3"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                android:background="@color/colorWhite">
+                <View
+                    android:layout_width="3dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="#f87347" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
+                    android:text="今日最新"
+                    android:textSize="16sp"
+                    android:textColor="@color/textColor"
+                    android:gravity="center"
+                    android:layout_marginStart="10dp"/>
+            </LinearLayout>
+            <app.louiemok.uni.starchef.seledefine.GridViewInScrollView
+                android:id="@+id/gv_todaynew"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none"
+                android:numColumns="2"
+                android:verticalSpacing="10dp"
+                android:horizontalSpacing="15dp"
+                android:background="@color/colorWhite" />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

@@ -1,0 +1,13 @@
+package app.louiemok.uni.starchef.model.updateuserinfo;
+
+import app.louiemok.uni.starchef.model.User;
+
+/**
+ * Created by Administrator on 2017/8/30 0030.
+ */
+
+public interface OnUpdateUserInfoListener {
+    void onUserIdError();
+    void onNetworkError( String errorMsg );
+    void onSuccess( User user );
+}

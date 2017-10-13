@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="bottomHomeColor">#feb128</color>
+    <color name="bottomDiscoverColor">#fe5d00</color>
+    <color name="bottomBookColor">#ffb129</color>
+    <color name="bottomSubscribeColor">#feb128</color>
+    <color name="bottomPersonalColor">#f04510</color>
+    <color name="backgroundColor">#f5f5f5</color>
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGray">#cccccc</color>
+    <color name="textColor">#333333</color>
+    <color name="colorLightGreen">#30ec54</color>
+    <color name="colorOrange">#fd6201</color>
+    <color name="colorRed">#FF0000</color>
+</resources>
