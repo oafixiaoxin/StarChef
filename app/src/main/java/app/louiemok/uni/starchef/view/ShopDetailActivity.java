@@ -1,9 +1,11 @@
 package app.louiemok.uni.starchef.view;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -27,6 +30,7 @@ import app.louiemok.uni.starchef.BaseActivity;
 import app.louiemok.uni.starchef.R;
 import app.louiemok.uni.starchef.adapter.NetCommandAdapter;
 import app.louiemok.uni.starchef.adapter.ShopConfigAdapter;
+import app.louiemok.uni.starchef.model.Comment;
 import app.louiemok.uni.starchef.model.Shop;
 import app.louiemok.uni.starchef.model.Voucher;
 import app.louiemok.uni.starchef.presenter.GetShopInfoPresenter;
@@ -38,6 +42,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.loopj.android.http.RequestParams;
 
 public class ShopDetailActivity extends BaseActivity implements View.OnClickListener, ShopDetailView{
 
@@ -59,19 +64,24 @@ public class ShopDetailActivity extends BaseActivity implements View.OnClickList
     ShopConfigAdapter shopConfigAdapter;
     ScrollView sv_shop_detail;
     LinearLayout ll_to_comment;
+    ImageView iv_more;
+    ImageView iv_collect;
+    ImageView iv_sendtoother;
+    ImageView iv_back;
 
     GetShopInfoPresenter presenter;
 
     String shopid;
     String shopContact;
     String shopName;
+    String isCollect = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_detail);
-        actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+//        actionBar = getSupportActionBar();
+//        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -81,13 +91,13 @@ public class ShopDetailActivity extends BaseActivity implements View.OnClickList
         presenter = new GetShopInfoPresenterImpl(this);
         shopid = getIntent().getStringExtra("shopid");
 
-        initNetCommandView();
         initElements();
 
         btn_tocupon = (Button)findViewById(R.id.btn_tocupon);
         btn_tocupon.setOnClickListener(this);
 
-        presenter.getShopInfo(shopid);
+        presenter.getShopInfo(shopid, getSharedPreferences("login", MODE_PRIVATE).getString
+                ("uid", "1"));
 
     }
 
@@ -96,32 +106,32 @@ public class ShopDetailActivity extends BaseActivity implements View.OnClickList
         super.onDestroy();
         presenter.onDestroy();
         ll_star_view = null;
+        isCollect = null;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu ( Menu menu ) {
-        getMenuInflater().inflate(R.menu.subscribe_shop_detail_menu, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu ( Menu menu ) {
+//        getMenuInflater().inflate(R.menu.subscribe_shop_detail_menu, menu);
+//        return true;
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected ( MenuItem menuItem ) {
-        switch (menuItem.getItemId()) {
-            case R.id.sendtoother:
-                Log.e("shopDetailActivity", "sendtoother");
-                break;
-            case R.id.star_collect:
-                Log.e("shopDetailActivity", "star_collect");
-                break;
-            case R.id.dot:
-                Log.e("shopDetailActivity", "dot");
-                break;
-            default:
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(menuItem);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected ( MenuItem menuItem ) {
+//        switch (menuItem.getItemId()) {
+//            case R.id.sendtoother:
+//                Log.e("shopDetailActivity", "sendtoother");
+//                break;
+//            case R.id.star_collect:
+//                break;
+//            case R.id.dot:
+//                Log.e("shopDetailActivity", "dot");
+//                break;
+//            default:
+//                finish();
+//                break;
+//        }
+//        return super.onOptionsItemSelected(menuItem);
+//    }
 
     private void initStarView ( int star ) {
         ll_star_view = (StarView)findViewById(R.id.ll_star_view);
@@ -129,10 +139,9 @@ public class ShopDetailActivity extends BaseActivity implements View.OnClickList
         ll_star_view.setStar(star, R.drawable.star1_normal, R.drawable.star1_cover, 20, 10);
     }
 
-    private void initNetCommandView () {
-        ArrayList<HashMap<String, String>> ls = new ArrayList<>();
+    private void initNetCommandView ( List<Comment> comments ) {
         lv_net_comment = (ListView)findViewById(R.id.lv_net_comment);
-        netCommandAdapter = new NetCommandAdapter(this, ls);
+        netCommandAdapter = new NetCommandAdapter(this, comments);
         lv_net_comment.setAdapter(netCommandAdapter);
 
         setListViewHeightBasedOnChild(lv_net_comment);
@@ -151,6 +160,14 @@ public class ShopDetailActivity extends BaseActivity implements View.OnClickList
         rl_phone_call.setOnClickListener(this);
         ll_to_comment = (LinearLayout)findViewById(R.id.ll_to_comment);
         ll_to_comment.setOnClickListener(this);
+        iv_more = (ImageView)findViewById(R.id.iv_more);
+        iv_more.setOnClickListener(this);
+        iv_collect = (ImageView)findViewById(R.id.iv_collect);
+        iv_collect.setOnClickListener(this);
+        iv_sendtoother = (ImageView)findViewById(R.id.iv_sendtoother);
+        iv_sendtoother.setOnClickListener(this);
+        iv_back = (ImageView)findViewById(R.id.iv_back);
+        iv_back.setOnClickListener(this);
     }
 
     private void setListViewHeightBasedOnChild ( ListView ls ) {
@@ -191,6 +208,42 @@ public class ShopDetailActivity extends BaseActivity implements View.OnClickList
                 intent.putExtra("title", shopName);
                 intent.putExtra("id", shopid);
                 ShopDetailActivity.this.startActivity(intent);
+                break;
+            case R.id.iv_sendtoother:
+                break;
+            case R.id.iv_more:
+                break;
+            case R.id.iv_collect:
+                if ( getSharedPreferences("login", MODE_PRIVATE).getString("uid", "").equals("")
+                        ) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("请登录");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(ShopDetailActivity.this, LoginActivity
+                                    .class);
+                            ShopDetailActivity.this.startActivity(intent);
+                        }
+                    });
+                    builder.create().show();
+                }
+                else {
+                    RequestParams params = new RequestParams();
+                    params.put("uid", getSharedPreferences("login", MODE_PRIVATE).getString
+                            ("uid", ""));
+                    params.put("targetid", shopid);
+                    params.put("type", "shop");
+                    if ( !isCollect.equals("") ) {
+                        presenter.cancelCollection(params);
+                    }
+                    else {
+                        presenter.addCollection(params);
+                    }
+                }
+                break;
+            case R.id.iv_back:
+                finish();
                 break;
             default:
                 break;
@@ -236,7 +289,8 @@ public class ShopDetailActivity extends BaseActivity implements View.OnClickList
     }
 
     @Override
-    public void onSuccess ( Shop shop, List<Voucher> voucherList ) {
+    public void onSuccess ( Shop shop, List<Voucher> voucherList, List<Comment> commentList,
+                            String ic ) {
         shopName = shop.getName();
         tv_shop_detail_name.setText(shop.getName());
         tv_shop_detail_type.setText(shop.getType());
@@ -245,6 +299,27 @@ public class ShopDetailActivity extends BaseActivity implements View.OnClickList
         initStarView(shop.getStar());
         initCuponView(voucherList);
         initShopConfigView(shop.getConfig());
+        if ( commentList.size() != 0 ) {
+            initNetCommandView(commentList);
+        }
+        this.isCollect = ic;
+        if ( !ic.equals("") ) {
+            iv_collect.setImageResource(R.drawable.star_collect_cover);
+        }
+    }
+
+    @Override
+    public void onAddCollectionSuccess ( String msg ) {
+        iv_collect.setImageResource(R.drawable.star_collect_cover);
+        this.isCollect = "1";
+        Toast.makeText(ShopDetailActivity.this, msg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onCancelCollectionSuccess ( String msg ) {
+        iv_collect.setImageResource(R.drawable.star_collect_normal);
+        this.isCollect = "";
+        Toast.makeText(ShopDetailActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void toPhoneCall ( String phoneNum ) {

@@ -2,6 +2,7 @@ package app.louiemok.uni.starchef.model.getshopinfo;
 
 import java.util.List;
 
+import app.louiemok.uni.starchef.model.Comment;
 import app.louiemok.uni.starchef.model.Shop;
 import app.louiemok.uni.starchef.model.Voucher;
 
@@ -11,5 +12,7 @@ import app.louiemok.uni.starchef.model.Voucher;
 
 public interface OnGetShopInfoFinishedListener {
     void onNetworkError(String msg);
-    void onSuccess(Shop shop, List<Voucher> vouchers);
+    void onSuccess(Shop shop, List<Voucher> vouchers, List<Comment> comments, String isCollect);
+    void onAddCollectionSuccess(String msg);
+    void onCancelCollectionSuccess(String msg);
 }

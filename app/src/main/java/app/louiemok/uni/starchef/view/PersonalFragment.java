@@ -151,6 +151,15 @@ public class PersonalFragment extends Fragment implements View.OnClickListener, 
                 getActivity().startActivity(intent);
                 break;
             case R.id.ll_collection:
+                if ( nickname.equals("")) {
+                    //跳转至登录页面
+                    intent = new Intent(getActivity(), LoginActivity.class);
+                    getActivity().startActivity(intent);
+                }
+                else {
+                    intent = new Intent(getActivity(), CollectionActivity.class);
+                    getActivity().startActivity(intent);
+                }
                 break;
             case R.id.ll_comment:
                 break;

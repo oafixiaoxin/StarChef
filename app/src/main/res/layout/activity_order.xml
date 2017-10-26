@@ -37,7 +37,7 @@
                 android:textSize="14sp"
                 android:textColor="@color/bottomPersonalColor"
                 android:gravity="center"
-                android:background="@drawable/bottom_2p5dp"/>
+                android:background="@drawable/bottom_orange_2p5dp"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="0dp"

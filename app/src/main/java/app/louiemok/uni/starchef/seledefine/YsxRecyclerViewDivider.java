@@ -22,7 +22,7 @@ public class YsxRecyclerViewDivider extends RecyclerView.ItemDecoration{
     private int mDividerHeight = 2;
     private int mOrientation;
     private static final int[] ATTRs = new int[]{android.R.attr.listDivider};
-    private int spanCount;
+    private int spanCount = 1;
     private int spacing;
     private boolean includeEdge;
 

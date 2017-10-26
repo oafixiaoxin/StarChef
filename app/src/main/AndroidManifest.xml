@@ -83,10 +83,10 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".view.ShopDetailActivity"
-            android:theme="@style/StarChefTheme"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".view.BuyCuponActivity"
-            android:theme="@style/StarChefTheme"/>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".view.PaymentActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
@@ -124,6 +124,9 @@
             android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"/>
         <activity
             android:name=".view.AddCommentActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+        <activity
+            android:name=".view.CollectionActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 

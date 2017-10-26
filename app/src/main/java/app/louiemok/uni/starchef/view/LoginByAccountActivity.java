@@ -141,6 +141,7 @@ public class LoginByAccountActivity extends BaseActivity implements LoginView, V
         Context ct = LoginByAccountActivity.this;
         SharedPreferences preferences = ct.getSharedPreferences("login", MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("uid", user.getUid());
         editor.putString("phone", user.getPhone());
         editor.putString("avatar", user.getAvatar());
         editor.putString("nickname", user.getNickname());

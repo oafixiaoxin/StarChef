@@ -1,5 +1,7 @@
 package app.louiemok.uni.starchef.presenter;
 
+import com.loopj.android.http.RequestParams;
+
 import app.louiemok.uni.starchef.model.getshopinfo.OnGetShopInfoFinishedListener;
 
 /**
@@ -7,6 +9,8 @@ import app.louiemok.uni.starchef.model.getshopinfo.OnGetShopInfoFinishedListener
  */
 
 public interface GetShopInfoPresenter {
-    void getShopInfo(String shopid);
+    void getShopInfo(String shopid, String uid);
+    void addCollection(RequestParams params);
+    void cancelCollection(RequestParams params);
     void onDestroy();
 }

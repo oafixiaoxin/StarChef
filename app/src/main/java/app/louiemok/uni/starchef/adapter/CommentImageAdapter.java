@@ -1,12 +1,16 @@
 package app.louiemok.uni.starchef.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import app.louiemok.uni.starchef.R;
@@ -21,11 +25,11 @@ public class CommentImageAdapter extends RecyclerView.Adapter<CommentImageAdapte
 
     private Context context;
 
-    private List<String> data;
+    private ArrayList<HashMap<String, Bitmap>> data;
 
     private MyItemClickListener listener;
 
-    public CommentImageAdapter ( Context context, List<String> d ) {
+    public CommentImageAdapter ( Context context, ArrayList<HashMap<String, Bitmap>> d ) {
         this.context = context;
         this.data = d;
     }
@@ -56,6 +60,14 @@ public class CommentImageAdapter extends RecyclerView.Adapter<CommentImageAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.itemView.setTag(position);
+        HashMap<String, Bitmap> map = data.get(position);
+        if ( map.get("normal") != null ) {
+            holder.iv_comment_image.setImageBitmap(map.get("normal"));
+            holder.iv_comment_image.setScaleType(ImageView.ScaleType.FIT_XY);
+        }
+        else {
+            holder.iv_comment_image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        }
     }
 
     @Override

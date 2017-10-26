@@ -1,14 +1,18 @@
 package app.louiemok.uni.starchef.view;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -22,17 +26,23 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.http.RequestParams;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import app.louiemok.uni.starchef.BaseActivity;
 import app.louiemok.uni.starchef.R;
 import app.louiemok.uni.starchef.adapter.CommentImageAdapter;
+import app.louiemok.uni.starchef.presenter.AddCommentPresenter;
+import app.louiemok.uni.starchef.presenter.AddCommentPresenterImpl;
 import app.louiemok.uni.starchef.seledefine.ImageTools;
 import app.louiemok.uni.starchef.seledefine.StarView;
 import app.louiemok.uni.starchef.seledefine.YsxRecyclerViewDivider;
 
-public class AddCommentActivity extends BaseActivity implements View.OnClickListener, TextWatcher {
+public class AddCommentActivity extends BaseActivity implements View.OnClickListener,
+        TextWatcher, AddCommentView {
 
     private TextView tv_cancel;
     private TextView tv_title;
@@ -48,23 +58,39 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
     private TextView tv_tips;
     private LinearLayout ll_comment;
     private EditText et_comment;
+    private EditText et_price_average;
     private RecyclerView rv_comment_image;
 
     CommentImageAdapter commentImageAdapter;
+    ArrayList<HashMap<String, Bitmap>> ls;
 
+    int choose_index = 99;
+    int taste = 0;
+    int enviroment = 0;
+    int service = 0;
+    int star = 0;
     String shopid;
     public static final int PICK_PIC = 1;
     public static final int CHOOSE_ALBUM = 2;
+    public static final int UPDATE_IMAGE = 3;
+
+    private AddCommentPresenter addCommentPresenter;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage (Message message) {
+            switch (message.what) {
+                case UPDATE_IMAGE:
+                    commentImageAdapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_comment);
-    }
-
-    @Override
-    public void onResume () {
-        super.onResume();
         initElements();
         tv_title.setText(getIntent().getStringExtra("title"));
         shopid = getIntent().getStringExtra("id");
@@ -73,6 +99,27 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
         initEnviroment();
         initServe();
         initCommentImage();
+    }
+
+    @Override
+    public void onResume () {
+        super.onResume();
+        if ( getSharedPreferences("login", MODE_PRIVATE).getString("uid", "").equals("") ) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage("请先登录");
+            builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(AddCommentActivity.this, LoginActivity.class);
+                    AddCommentActivity.this.startActivity(intent);
+                    dialog.dismiss();
+                }
+            });
+            builder.create().show();
+        }
+        else {
+            addCommentPresenter = new AddCommentPresenterImpl(this);
+        }
     }
 
     @Override
@@ -95,6 +142,7 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
         ll_comment = (LinearLayout) findViewById(R.id.ll_comment);
         et_comment = (EditText)findViewById(R.id.et_comment);
         et_comment.addTextChangedListener(this);
+        et_price_average = (EditText)findViewById(R.id.et_price_average);
     }
 
     private void initStarView () {
@@ -105,6 +153,7 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
             @Override
             public void click(int position) {
                 tv_star_count.setText(""+(position+1)+"星");
+                star = position+1;
                 if ( ll_comment.getVisibility() == View.GONE ) {
                     ll_comment.setVisibility(View.VISIBLE);
                 }
@@ -120,6 +169,7 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
             @Override
             public void click(int position) {
                 tv_comment_taste.setText(getComment(position));
+                taste = position+1;
             }
         });
     }
@@ -132,6 +182,7 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
             @Override
             public void click(int position) {
                 tv_comment_enviroment.setText(getComment(position));
+                enviroment = position+1;
             }
         });
     }
@@ -144,13 +195,16 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
             @Override
             public void click(int position) {
                 tv_comment_serve.setText(getComment(position));
+                service = position+1;
             }
         });
     }
 
     private void initCommentImage () {
-        final List<String> ls = new ArrayList<>();
-        ls.add("");
+        ls = new ArrayList<>();
+        HashMap<String, Bitmap> hs = new HashMap<>();
+        hs.put("normal", null);
+        ls.add(hs);
         rv_comment_image = (RecyclerView) findViewById(R.id.rv_comment_image);
         commentImageAdapter = new CommentImageAdapter(this, ls);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4, GridLayout.VERTICAL,
@@ -162,7 +216,9 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
         commentImageAdapter.setOnItemClickListener(new CommentImageAdapter.MyItemClickListener() {
             @Override
             public void onClick(View view, int position) {
-                if ( !ls.get(position).equals("") ) {
+                choose_index = position;
+                HashMap<String, Bitmap> map = ls.get(position);
+                if ( map.get("normal") != null ) {
 
                 }
                 else {
@@ -192,6 +248,7 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
     }
 
     private void clearEle () {
+        addCommentPresenter.onDestroy();
         tv_cancel = null;
         tv_title = null;
         btn_commit = null;
@@ -233,7 +290,20 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
                         Log.e("bitmap", "压缩后:图片的bitmap大小为:" + bitmap.getByteCount() +
                                 ",宽为:" + bitmap.getWidth
                                 () + ",高为:" + bitmap.getHeight());
-//                        iv.setImageBitmap(bitmap);
+                        HashMap<String, Bitmap> map = ls.get(choose_index);
+                        map.put("normal", bitmap);
+                        HashMap<String, Bitmap> map1 = new HashMap<>();
+                        map1.put("normal", null);
+                        ls.add(map1);
+                        choose_index = 99;
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Message message = new Message();
+                                message.what = UPDATE_IMAGE;
+                                handler.sendMessage(message);
+                            }
+                        }).start();
                     }
                     catch ( Exception ex ) {
                         ex.printStackTrace();
@@ -271,6 +341,38 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
                 finish();
                 break;
             case R.id.btn_commit:
+                if ( star == 0 ) {
+                    Toast.makeText(AddCommentActivity.this, "请给总体打分", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if ( taste == 0 ) {
+                    Toast.makeText(AddCommentActivity.this, "请给品味打分", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if ( enviroment == 0 ) {
+                    Toast.makeText(AddCommentActivity.this, "请给环境打分", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if ( service == 0 ) {
+                    Toast.makeText(AddCommentActivity.this, "请给服务打分", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else {
+                    RequestParams params = new RequestParams();
+                    params.put("uid", getSharedPreferences("login", MODE_PRIVATE).getString("uid", ""));
+                    params.put("star", star);
+                    params.put("taste", taste);
+                    params.put("enviroment", enviroment);
+                    params.put("serve", service);
+                    params.put("content", et_comment.getText());
+                    params.put("type", "shop");
+                    params.put("parentid", 0);
+                    params.put("targetid", shopid);
+                    params.put("costaver", et_price_average.getText());
+                    params.put("imageAry", "");
+//                params.put("imageAry", createImageArray(ls));
+                    addCommentPresenter.addComment(params);
+                }
                 break;
         }
     }
@@ -318,5 +420,32 @@ public class AddCommentActivity extends BaseActivity implements View.OnClickList
         else {
             tv_tips.setText("已超过"+(c.length()-150)+"个字符");
         }
+    }
+
+    private List<String> createImageArray (ArrayList<HashMap<String, Bitmap>> list ) {
+        List<String> imageBase64 = new ArrayList<>();
+        for ( int i = 0 ; i < list.size() - 1 ; i++ ) {
+            HashMap<String, Bitmap> map = list.get(i);
+            imageBase64.add("data:image/png;base64,"+ImageTools.bitmapToBase64(map.get("normal")));
+        }
+        return imageBase64;
+    }
+
+    @Override
+    public void onSuccess () {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("评论成功");
+        builder.setPositiveButton("返回", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.create().show();
+    }
+
+    @Override
+    public void onNetworkError ( String msg ) {
+        Toast.makeText(AddCommentActivity.this, msg, Toast.LENGTH_SHORT).show();
     }
 }

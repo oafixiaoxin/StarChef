@@ -1,7 +1,10 @@
 package app.louiemok.uni.starchef.presenter;
 
+import com.loopj.android.http.RequestParams;
+
 import java.util.List;
 
+import app.louiemok.uni.starchef.model.Comment;
 import app.louiemok.uni.starchef.model.Shop;
 import app.louiemok.uni.starchef.model.Voucher;
 import app.louiemok.uni.starchef.model.getshopinfo.GetShopInfoModel;
@@ -23,8 +26,18 @@ public class GetShopInfoPresenterImpl implements GetShopInfoPresenter, OnGetShop
     }
 
     @Override
-    public void getShopInfo ( String shopid ) {
-        getShopInfoModel.getShopInfo(shopid, this);
+    public void getShopInfo ( String shopid, String uid ) {
+        getShopInfoModel.getShopInfo(shopid, uid, this);
+    }
+
+    @Override
+    public void addCollection (RequestParams params) {
+        getShopInfoModel.addCollection(params, this);
+    }
+
+    @Override
+    public void cancelCollection ( RequestParams params ) {
+        getShopInfoModel.cancelCollection(params, this);
     }
 
     @Override
@@ -38,7 +51,19 @@ public class GetShopInfoPresenterImpl implements GetShopInfoPresenter, OnGetShop
     }
 
     @Override
-    public void onSuccess ( Shop shop, List<Voucher> vouchers ) {
-        shopDetailView.onSuccess(shop, vouchers);
+    public void onSuccess (Shop shop, List<Voucher> vouchers, List<Comment> comments, String
+            isCollect) {
+        shopDetailView.onSuccess(shop, vouchers, comments, isCollect);
     }
+
+    @Override
+    public void onAddCollectionSuccess (String msg) {
+        shopDetailView.onAddCollectionSuccess(msg);
+    }
+
+    @Override
+    public void onCancelCollectionSuccess ( String msg ) {
+        shopDetailView.onCancelCollectionSuccess(msg);
+    }
+
 }
